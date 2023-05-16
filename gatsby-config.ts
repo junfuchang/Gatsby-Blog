@@ -5,43 +5,42 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    // You can overwrite values here that are used for the SEO component
-    // You can also add new values here to query them like usual
-    // See all options: https://github.com/LekoArts/gatsby-themes/blob/main/themes/gatsby-theme-minimal-blog/gatsby-config.mjs
-    siteTitle: `Minimal Blog`,
-    siteTitleAlt: `Minimal Blog - Gatsby Theme`,
-    siteHeadline: `Minimal Blog - Gatsby Theme from @lekoarts`,
-    siteUrl: `https://minimal-blog.lekoarts.de`,
-    siteDescription: `Typography driven, feature-rich blogging theme with minimal aesthetics. Includes tags/categories support and extensive features for code blocks such as live preview, line numbers, and line highlighting.`,
+    siteTitle: `Bin`,
+    siteTitleAlt: `Bin - 知足而常乐`,
+    siteHeadline: `Bin - 知足而常乐`,
+    siteUrl: `https://bin.ink`,
+    siteDescription: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！`,
     siteImage: `/banner.jpg`,
-    siteLanguage: `en`,
-    author: `@lekoarts_de`,
+    siteLanguage: `zh-Hans`,
+    author: `junfu`,
   },
+  // 网址结尾是否带 /
   trailingSlash: `never`,
   plugins: [
     {
       resolve: `@lekoarts/gatsby-theme-minimal-blog`,
-      // See the theme's README for all available options
       options: {
+        // header 导航
         navigation: [
           {
             title: `Blog`,
             slug: `/blog`,
           },
           {
-            title: `About`,
-            slug: `/about`,
+            title: `Tags`,
+            slug: `/tags`,
           },
+          // {
+          //   title: `About`,
+          //   slug: `/about`,
+          // },
         ],
+        // header 右侧
         externalLinks: [
-          {
-            name: `Twitter`,
-            url: `https://twitter.com/lekoarts_de`,
-          },
-          {
-            name: `Homepage`,
-            url: `https://www.lekoarts.de?utm_source=minimal-blog&utm_medium=Starter`,
-          },
+          // {
+          //   name: `Github`,
+          //   url: `https://github.com/junfuchang`,
+          // },
         ],
       },
     },
@@ -54,14 +53,12 @@ const config: GatsbyConfig = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: `minimal-blog - @lekoarts/gatsby-theme-minimal-blog`,
-        short_name: `minimal-blog`,
-        description: `Typography driven, feature-rich blogging theme with minimal aesthetics. Includes tags/categories support and extensive features for code blocks such as live preview, line numbers, and code highlighting.`,
+        name: `Bin - 知足而常乐`,
+        short_name: `Bin`,
+        description: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！`,
         start_url: `/`,
-        background_color: `#fff`,
-        // This will impact how browsers show your PWA/website
-        // https://css-tricks.com/meta-theme-color-and-trickery/
-        // theme_color: `#6B46C1`,
+        background_color: `#ffffe2`,
+        theme_color: `#90EE90`,
         display: `standalone`,
         icons: [
           {
@@ -123,7 +120,7 @@ const config: GatsbyConfig = {
   }
 }`,
             output: `rss.xml`,
-            title: `Minimal Blog - @lekoarts/gatsby-theme-minimal-blog`,
+            title: `Bin - 知足而常乐`,
           },
         ],
       },
