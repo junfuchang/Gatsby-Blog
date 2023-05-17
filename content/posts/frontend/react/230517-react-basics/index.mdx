@@ -1,0 +1,176 @@
+---
+title: React基础知识
+date: 2023-05-17
+description: 介绍下react的核心基础知识与概念
+tags:
+  - frontend
+  - react
+canonicalUrl: https://www.bin.ink/230517-react-basics
+---
+
+接触 React 也有一段时间了，在使用上一些核心基础知识（概念性）需牢记 。
+
+# 页面的组成
+
+页面可被看成各类组件的嵌套组合。
+
+```jsx
+import { useState } from "react";
+
+export default function BaseReactComp() {
+  const [showTitle, setShowTitle] = useState(true);
+  const list = ["苹果", "香蕉"];
+
+  return (
+    <div>
+      {showTitle && <h1 style={{ color: "darkblue" }}>水果店</h1>}
+      <ol>
+        {list.map((value, index) => (
+          <li key={index}>{value}</li>
+        ))}
+      </ol>
+      <MyButton onClick={() => setShowTitle(!showTitle)} />
+    </div>
+  );
+}
+
+function MyButton({ onClick }: any) {
+  return <button onClick={onClick}>切换标题显隐</button>;
+}
+```
+
+这里涉及以下基础知识：
+
+- 组件的嵌套
+- JSX 语法规则 ⭐
+- 基础 hook 使用 ⭐（另开新文）
+- 条件渲染
+- 列表渲染
+- 数据流传递 ⭐
+- 事件响应
+
+# JSX 语法规则
+
+1. 标签中**混入 JS表达式时要用 {}**
+2. 样式的类名指定不要用 class，要用**className**
+3. 内联样式，要用`style={{key : value}}`的形式去写
+4. **只有一个根标签**
+5. 标签**必须闭合**
+6. 标签**首字母**
+
+   （1）若小写字母开头，则将该标签转为 html 中同名元素，若 html 中无该标签对应的同名元素，则报错。
+
+   （2）若大写字母开头，react 就去渲染对应的组件，若组件没有定义，则报错。
+
+## 表达式
+
+表达式：一个表达式会产生一个值，可以放在任何一个需要值的地方
+
+1. a
+2. a+b
+3. demo(1)
+4. arr.map()
+5. function test () {}
+
+# 数据流传递
+
+> [React 数据流 - 掘金](https://www.notion.so/94271c17c2844c1893ad3a75069a5458)
+
+## 获取组件实例
+
+### `ref`转发
+
+```tsx
+const MyInput = forwardRef((props, ref) => {
+  const realInputRef = useRef(null);
+  useImperativeHandle(ref, () => ({
+    focus() {
+      realInputRef.current.focus();
+    },
+  }));
+  return <input {...props} ref={realInputRef} />;
+});
+
+function Form() {
+  const inputRef = useRef(null);
+
+  function handleClick() {
+    inputRef.current.focus();
+  }
+
+  return (
+    <>
+      <MyInput ref={inputRef} />
+      <button onClick={handleClick}>
+        Focus the input
+      </button>
+    </>
+  );
+}
+```
+
+## 跨越多层传递
+
+### `context`
+
+若传递的参数变化，后续消费组件也将发生改变
+
+**Provider：**
+
+```tsx
+const ThemeContext = React.createContext("light")
+import ConsumerComponent form './ConsumerComponent'
+
+function ProviderComponent(){
+    const [ theme , setTheme ] = React.useState({ theme: "light" })
+    return <div>
+        <ThemeContext.Provider value={ theme } >
+           <ConsumerComponent />
+        </ThemeContext.Provider>
+    </div>
+}
+
+export default ProviderComponent
+```
+
+**Consumer：**
+
+函数组件：
+
+（1）使用 useContext：
+
+```tsx
+export default function ConsumerComponent() {
+  const contextValue = React.useContext(ThemeContext);
+  const { theme } = contextValue;
+  return <div style={{ color: theme }}>消费者</div>;
+}
+```
+
+（2）使用订阅者：
+
+```tsx
+export default const ConsumerComponent = () => {
+  return (
+    <ThemeContext.Consumer>
+       { (contextValue)=> // todo }
+    </ThemeContext.Consumer>
+	)
+}
+```
+
+类组件：
+
+使用 contextType 方式
+
+```tsx
+class ConsumerComponent extends React.Component {
+  render() {
+    const { theme } = this.context;
+    return <div style={{ color: theme }}>消费者</div>;
+  }
+}
+ConsumerComponent.contextType = ThemeContext;
+
+export default ConsumerComponent;
+```
