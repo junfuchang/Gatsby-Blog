@@ -51,8 +51,10 @@ function MyButton({ onClick }: any) {
 
 # JSX 语法规则
 
+❤️渲染逻辑和标签共同存在于同一个地方
+
 1. 标签中**混入 JS表达式时要用 {}**
-2. 样式的类名指定不要用 class，要用**className**
+2. 样式的类名指定不要用 class，要用**className**，使用驼峰式命名法给大部分属性命名
 3. 内联样式，要用`style={{key : value}}`的形式去写
 4. **只有一个根标签**
 5. 标签**必须闭合**
@@ -174,3 +176,16 @@ ConsumerComponent.contextType = ThemeContext;
 
 export default ConsumerComponent;
 ```
+
+# Tic-Tac-Toe练习
+
+> [Tutorial: Tic-Tac-Toe – React (docschina.org)](https://react.docschina.org/learn/tutorial-tic-tac-toe)
+> 
+
+本联系中遇到的关键问题
+
+- 数据结构设计与数据流
+- 数组对象的引用问题
+  - `const nextSquares = [...squares];`
+
+[tic-tac-toe.tsx](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/eaaa4152-3150-4006-8334-1190ebfb1c56/page.tsx)
