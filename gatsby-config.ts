@@ -6,8 +6,8 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
 const config: GatsbyConfig = {
   siteMetadata: {
     siteTitle: `Bin`,
-    siteTitleAlt: `Bin - 知足而常乐`,
-    siteHeadline: `Bin - 知足而常乐`,
+    siteTitleAlt: `Bin - 收获与分享，知足而常乐`,
+    siteHeadline: `Bin - 收获与分享，知足而常乐`,
     keywords: `bin 技术 分享 technology`,
     siteUrl: `https://bin.ink`,
     siteDescription: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！`,
