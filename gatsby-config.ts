@@ -1,13 +1,14 @@
-import type { GatsbyConfig, PluginRef } from "gatsby"
-import "dotenv/config"
+import type { GatsbyConfig, PluginRef } from "gatsby";
+import "dotenv/config";
 
-const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE
+const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
 
 const config: GatsbyConfig = {
   siteMetadata: {
     siteTitle: `Bin`,
     siteTitleAlt: `Bin - 知足而常乐`,
     siteHeadline: `Bin - 知足而常乐`,
+    keywords: `bin 技术 分享 technology`,
     siteUrl: `https://bin.ink`,
     siteDescription: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！`,
     siteImage: `/banner.jpg`,
@@ -94,11 +95,14 @@ const config: GatsbyConfig = {
             serialize: ({
               query: { site, allPost },
             }: {
-              query: { allPost: IAllPost; site: { siteMetadata: ISiteMetadata } }
+              query: {
+                allPost: IAllPost;
+                site: { siteMetadata: ISiteMetadata };
+              };
             }) =>
               allPost.nodes.map((post) => {
-                const url = site.siteMetadata.siteUrl + post.slug
-                const content = `<p>${post.excerpt}</p><div style="margin-top: 50px; font-style: italic;"><strong><a href="${url}">Keep reading</a>.</strong></div><br /> <br />`
+                const url = site.siteMetadata.siteUrl + post.slug;
+                const content = `<p>${post.excerpt}</p><div style="margin-top: 50px; font-style: italic;"><strong><a href="${url}">Keep reading</a>.</strong></div><br /> <br />`;
 
                 return {
                   title: post.title,
@@ -107,7 +111,7 @@ const config: GatsbyConfig = {
                   url,
                   guid: url,
                   custom_elements: [{ "content:encoded": content }],
-                }
+                };
               }),
             query: `{
   allPost(sort: {date: DESC}) {
@@ -135,41 +139,41 @@ const config: GatsbyConfig = {
       },
     },
   ].filter(Boolean) as Array<PluginRef>,
-}
+};
 
-export default config
+export default config;
 
 interface IPostTag {
-  name: string
-  slug: string
+  name: string;
+  slug: string;
 }
 
 interface IPost {
-  slug: string
-  title: string
-  defer: boolean
-  date: string
-  excerpt: string
-  contentFilePath: string
-  html: string
-  timeToRead: number
-  wordCount: number
-  tags: Array<IPostTag>
-  banner: any
-  description: string
-  canonicalUrl: string
+  slug: string;
+  title: string;
+  defer: boolean;
+  date: string;
+  excerpt: string;
+  contentFilePath: string;
+  html: string;
+  timeToRead: number;
+  wordCount: number;
+  tags: Array<IPostTag>;
+  banner: any;
+  description: string;
+  canonicalUrl: string;
 }
 
 interface IAllPost {
-  nodes: Array<IPost>
+  nodes: Array<IPost>;
 }
 
 interface ISiteMetadata {
-  siteTitle: string
-  siteTitleAlt: string
-  siteHeadline: string
-  siteUrl: string
-  siteDescription: string
-  siteImage: string
-  author: string
+  siteTitle: string;
+  siteTitleAlt: string;
+  siteHeadline: string;
+  siteUrl: string;
+  siteDescription: string;
+  siteImage: string;
+  author: string;
 }

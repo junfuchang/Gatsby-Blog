@@ -1,32 +1,32 @@
 User-agent: Baiduspider
-Disallow: 
+Disallow:
 User-agent: Bingbot
-Disallow: 
+Disallow:
 User-agent: Sogou web spider
-Disallow: 
+Disallow:
 User-agent: Sosospider
-Disallow: 
+Disallow:
 User-agent: YodaoBot
-Disallow: 
+Disallow:
 User-agent: 360Spider
-Disallow: 
+Disallow:
 User-agent: YisouSpider
-Disallow: 
+Disallow:
 User-agent: Googlebot
-Disallow: 
+Disallow:
 User-agent: teoma
-Disallow: 
+Disallow:
 User-agent: ia_archiver
-Disallow: 
+Disallow:
 User-agent: twiceler
-Disallow: 
+Disallow:
 User-agent: Robozilla
-Disallow: 
+Disallow:
 User-agent: Gigabot
-Disallow: 
+Disallow:
 User-agent: Mediapartners-Google
-Disallow: 
+Disallow:
 User-agent: *
 Disallow:
 
-# sitemap: https://minimal-blog.lekoarts.de/sitemap-index.xml
+sitemap: https://bin.ink/sitemap.xml
