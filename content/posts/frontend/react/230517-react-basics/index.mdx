@@ -5,7 +5,6 @@ description: 介绍下react的核心基础知识与概念
 tags:
   - frontend
   - react
-canonicalUrl: https://www.bin.ink/230517-react-basics
 ---
 
 接触 React 也有一段时间了，在使用上一些核心基础知识（概念性）需牢记 。
@@ -51,9 +50,9 @@ function MyButton({ onClick }: any) {
 
 # JSX 语法规则
 
-❤️渲染逻辑和标签共同存在于同一个地方
+❤️ 渲染逻辑和标签共同存在于同一个地方
 
-1. 标签中**混入 JS表达式时要用 {}**
+1. 标签中**混入 JS 表达式时要用 {}**
 2. 样式的类名指定不要用 class，要用**className**，使用驼峰式命名法给大部分属性命名
 3. 内联样式，要用`style={{key : value}}`的形式去写
 4. **只有一个根标签**
@@ -103,9 +102,7 @@ function Form() {
   return (
     <>
       <MyInput ref={inputRef} />
-      <button onClick={handleClick}>
-        Focus the input
-      </button>
+      <button onClick={handleClick}>Focus the input</button>
     </>
   );
 }
@@ -177,10 +174,9 @@ ConsumerComponent.contextType = ThemeContext;
 export default ConsumerComponent;
 ```
 
-# Tic-Tac-Toe练习
+# Tic-Tac-Toe 练习
 
 > [Tutorial: Tic-Tac-Toe – React (docschina.org)](https://react.docschina.org/learn/tutorial-tic-tac-toe)
-> 
 
 本联系中遇到的关键问题
 

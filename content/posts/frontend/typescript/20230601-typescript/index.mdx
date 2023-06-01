@@ -1,0 +1,430 @@
+---
+title: TypeScript基础知识
+date: 2023-06-01
+description: 介绍下TypeScript的核心基础知识与概念
+tags:
+  - frontend
+  - typescript
+---
+
+# TypeScript 基础知识
+
+> [TypeScript 手册](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/basic-types.html#number)
+
+# 基础类型
+
+下面是我已知、能够想到的一些基础类型，并了解其基础用法：
+
+- string
+- number / bigint
+  - _支持 2/8/10/16 进制字面量_
+- boolean
+- object
+  - object  表示非原始类型
+  - 注：注意与 Object 包装类型区分（Number 、 String 、 Boolean 等），包装类型上只存在着几个原始方法，几乎不推荐在任何地方使用
+- `Array<any>` / `any[]`
+  - 表示哪种类型的数组，若个数与类型是确定的，则可以使用下面的元组
+  - `const tuple : [string, number] = [”小红”, 10]` // 访问越界将会报错
+- null / undefined
+  - 默认检查器认为  null  与  undefined  可以赋值给任何类型。 `--strictNullChecks`  标记可以解决此错误
+  - 它俩类型只包含本身，但是可以作为其他类型的子集
+- enum
+
+  ```tsx
+  enum TYPE {
+    success,
+    error = 1 + 3,
+    warn = success + error,
+  }
+
+  TYPE[4]; // warn, 因为枚举从零开始，warn与error值相同，但是warn声明在后进行了覆盖
+  ```
+
+  - 默认从 0 开始，赋值数值后后续的值将递增；赋值其他类型的值后后续需要手动赋值
+  - 枚举是在**运行时**真正存在的**对象**
+
+- any
+  - 表示不希望进行类型检查，通常用于三方库或用户输入，不要滥用
+
+下面是其他的一些类型需要了解：
+
+- unknown
+  - 表示当前未知的类型，但可以通过后续的类型缩窄可以确定它的类型
+- void
+  - 表示返回为空
+- never
+  - 表示永远不可能到达，比如遇到了异常或死循环等
+
+# \***\*高级类型\*\***
+
+## 泛型
+
+- 泛型约束
+
+  ```tsx
+  function getProperty<T, K extends keyof T>(obj: T, key: K) {
+    return obj[key];
+  }
+
+  let x = { a: 1, b: 2, c: 3, d: 4 };
+
+  getProperty(x, "a"); // okay
+  getProperty(x, "m"); // error
+  ```
+
+  - \***\*有条件类型\*\***
+
+  `T extends U ? X : Y`
+
+  `T`  的类型为  `A | B | C` ，会被解析为  `(A extends U ? X : Y) | (B extends U ? X : Y) | (C extends U ? X : Y)`
+
+  ```tsx
+  declare function f<T extends boolean>(x: T): T extends true ? string : number;
+  let x = f(Math.random() < 0.5); // string | number
+  //==================================
+  type Boxed<T> = T extends any[] ? BoxedArray<T[number]> : BoxedValue<T>;
+  type T21 = Boxed<number[]>; // BoxedArray<number>
+  ```
+
+- 泛型类
+
+  ```tsx
+  class GenericNumber<T> {
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+  }
+
+  let myGenericNumber = new GenericNumber<number>();
+  myGenericNumber.zeroValue = 0;
+  myGenericNumber.add = function (x, y) {
+    return x + y;
+  };
+  ```
+
+### \***\*索引类型\*\***
+
+- `keyof` **索引类型查询操作符**
+
+对于任何类型  `T` ， `keyof T`  的结果为  `T`  上已知的公共属性名的联合。
+
+- `T[K]` **索引访问操作符**
+
+### 映射类型
+
+`type Nullable<T> = { [P in keyof T]: T[P] | null }`
+
+> 属性列表是  `keyof T`  且结果类型是  `T[P]`  的变体。 这是使用通用映射类型的一个好模版。 因为这类转换是**同态**的，映射只作用于  `T`  的属性而没有其它的。
+
+## \***\*联合类型\*\***
+
+```tsx
+type strAndNum = string | number;
+```
+
+**若具有公共字段的联合，则只能访问共有成员，**后续通过类型缩小来确定是哪个类型。
+
+## \***\*交叉类型\*\***
+
+交叉类型是将多个类型合并为一个类型
+
+```tsx
+type Intersection = Person & Serializable & Loggable;
+```
+
+## \***\*类型守卫（确认类型）\*\***
+
+1. \***\*使用类型判定\*\***
+
+```tsx
+function isFish(pet: Fish | Bird): pet is Fish {
+  //  pet is Fish => 类型谓词
+  return (pet as Fish).swim !== undefined;
+}
+if (isFish(pet)) {
+  pet.swim();
+}
+```
+
+1. \***\*使用  `in`  操作符**
+
+```tsx
+if ("swim" in pet) {
+  return pet.swim();
+}
+```
+
+1. `**typeof`  类型守卫\*\*
+
+- 只有两种形式能被识别： `typeof v === "typename"`  和  `typeof v !== "typename"`
+- "typename"  必须是  "number" ， "string" ， "boolean"  或  "symbol"
+
+```tsx
+if (typeof padding === "string") {
+  return padding + value;
+}
+```
+
+1. \***\*`instanceof`  类型守卫**
+
+- [instanceof 类型守卫](https://bosens-china.github.io/Typescript-manual/download/zh/reference/advanced-types.html#%E7%B1%BB%E5%9E%8B%E5%AE%88%E5%8D%AB%E4%B8%8E%E7%B1%BB%E5%9E%8B%E5%8C%BA%E5%88%86-type-guards-and-differentiating-types)
+
+## 类型别名
+
+- 类型别名并不创建新名字
+- _无法通过接口来描述一个类型并且需要使用联合类型或元组类型，这时通常会使用类型别名_
+
+## \***\*多态的  `this`  类型**
+
+> 多态的  `this`  类型表示的是某个包含类或接口的子类型。 这被称做*F*-bounded 多态性。 它能很容易的表现连贯接口间的继承。
+
+[多态的  this  类型](https://bosens-china.github.io/Typescript-manual/download/zh/reference/advanced-types.html#%E5%A4%9A%E6%80%81%E7%9A%84this%E7%B1%BB%E5%9E%8B)
+
+# 类型断言
+
+> 类型断言好比其它语言里的类型转换，但是不进行特殊的数据检查和解构。
+
+两种使用方式：
+
+第一种：`someValue as string`
+
+第二种：`<string>someValue`
+
+**在 tsx 文件中只能使用第一种方式。**
+
+# 接口
+
+> TypeScript 的核心原则之一是对值所具有的**结构**进行类型检查。 它有时被称做 “鸭式辨型法” 或 “结构性子类型化”。
+
+一个简单的示例包含着接口的大多数使用场景：
+
+```tsx
+interface IValue {
+  label: string; // 必填
+  name?: string; // 可选
+  readonly age: number; // 只读
+  func(): void; // 函数
+}
+```
+
+## 🚧 额外的类型检查
+
+按照规则而言，向上述`IValue`接口传递 `{label:"aa", age:18, time:10}` 是可行的，因为**只需保证必填属性存在即可。**
+
+但是 TS 会进行额外的类型检查，_如果一个对象字面量存在任何 “目标类型” 不包含的属性时，你会得到一个错误_，以预防人为失误的产生。
+
+我们可以有三种方法绕过它的额外检查：[TypeScript 手册](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/interfaces.html#%E9%A2%9D%E5%A4%96%E7%9A%84%E5%B1%9E%E6%80%A7%E6%A3%80%E6%9F%A5)
+
+1. 使用类型断言
+2. 添加一个字符串索引签名
+
+   `[propName: string]: any;`
+
+3. 使用变量绕过类型检查（前提是确保变量有类型中包含共有的属性）
+
+   ```tsx
+   let temp = { color: "red" };
+   let mySquare = func(temp);
+   ```
+
+## 索引类型
+
+> 具有描述对象索引类型的**索引签名**，并有相应的索引返回值类型
+
+```tsx
+interface StringArray {
+  [index: number]: string;
+}
+
+let myArray: StringArray;
+myArray = ["Bob", "Fred"];
+
+let myStr: string = myArray[0];
+```
+
+> Typescript 支持两种索引签名：字符串和数字。
+> **可以同时使用两种类型的索引，但是数字索引的返回值必须是字符串索引返回值类型的子类型（类型更多以兼容）。** > [TypeScript 手册](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/interfaces.html#%E5%8F%AF%E7%B4%A2%E5%BC%95%E7%9A%84%E7%B1%BB%E5%9E%8B)
+
+```tsx
+class Animal {
+  name: string;
+}
+class Dog extends Animal {
+  breed: string;
+}
+interface NotOkay {
+  [x: number]: Dog;
+  [x: string]: Animal;
+}
+```
+
+## 接口继承
+
+能够**多继承**
+
+```tsx
+interface A extends B, C {
+  label: string;
+}
+```
+
+## 接口继承类
+
+> 接口同样会继承到类的 private 和 protected 成员
+
+**当接口继承了一个类，那么这个接口只能被这个类或其子类实现**
+
+[TypeScript 手册](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/interfaces.html#%E6%8E%A5%E5%8F%A3%E7%BB%A7%E6%89%BF%E7%B1%BB)
+
+# 函数
+
+## 使用接口描述
+
+- 函数的参数名不需要与接口里定义的名字相匹配，对应位置上的参数类型兼容即可
+
+```tsx
+interface SearchFunc {
+  (source: string, subString: string): boolean;
+}
+
+let mySearch: SearchFunc;
+mySearch = function (source, subString) {
+  let result = source.search(subString);
+  return result > -1;
+};
+```
+
+## 直接描述
+
+完整形式
+
+```tsx
+// 包含了默认参数、可选参数、剩余参数的使用
+let myAdd: (A: number, B = 100, C?: number, ...rest: number[]) => number =
+  function (x: number, y = 100, z?: number, ...rest: number[]): number {
+    return x + y + z;
+  };
+```
+
+类型推断可以帮助我们只写**任意一侧**，如
+
+```tsx
+let myAdd = function (x: number, y: number): number {
+  return x + y;
+};
+```
+
+## \***\*this  和箭头函数\*\***
+
+1. 箭头函数能够确定 this 的上下文，所以不必给 this 指定类型
+2. 当使用函数声明的函数想要使用 this，最好进行类型指定，否则容易出现人为失误
+
+```tsx
+let deck: Deck = {
+  suits: ["hearts"],
+  createPicker: function (this: Deck) {
+    return () => {
+      return this.suits[0];
+    };
+  },
+};
+```
+
+1. [回调函数里的 this 参数](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/functions.html#%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E9%87%8C%E7%9A%84this%E5%8F%82%E6%95%B0)
+
+## 函数重载
+
+方法名相同但接受参数不同，调用时会自动进行推断调用哪个。
+
+```tsx
+function pickCard(x: { suit: string; card: number }[]): number;
+function pickCard(x: number): { suit: string; card: number };
+```
+
+# \***\*实用工具类型\*\***
+
+[实用工具类型](https://bosens-china.github.io/Typescript-manual/download/zh/reference/utility-types.html#%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B)
+
+| 工具类型                       | 描述                                                                                                                 |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `Partial<Type>`                | 将所有属性设置为可选                                                                                                 |
+| `Readonly<Type>`               | 将所有的属性设置为  readonly                                                                                         |
+| `Record<Keys, Type> `          | 键名 Keys 类型，键值 Typs 类型                                                                                       |
+| `Pick<Type, Keys>`             | 从 Type 中挑选 Keys                                                                                                  |
+| `Omit<Type, Keys>`             | 从 Type 中剔除 Keys 类型                                                                                             |
+| `Exclude<Type, ExcludedUnion>` | 找到在 Type 中而不在 Exclue 中的属性                                                                                 |
+| `Extract<Type, Union>`         | 取两个类型的交集                                                                                                     |
+| `NonNullable<Type>`            | 剔除  null  和  undefined                                                                                            |
+| `Parameters<FuncType>`         | 将函数的参数类型构建成一个元组                                                                                       |
+| `ConstructorParameters<Type>`  | https://bosens-china.github.io/Typescript-manual/download/zh/reference/utility-types.html#constructorparameters-type |
+| `ReturnType<Type>`             | 将函数返回值类型构建成一个类型                                                                                       |
+| `InstanceType<Type>`           | https://bosens-china.github.io/Typescript-manual/download/zh/reference/utility-types.html#instancetype-type          |
+| `Required<Type>`               | 是所有属性变为必填                                                                                                   |
+| `ThisParameterType<FuncType>`  | 返回函数 this 的类型                                                                                                 |
+| `OmitThisParameter<Type>`      | 从  Type  类型中剔除  this  参数                                                                                     |
+| `ThisType<Type>`               | https://bosens-china.github.io/Typescript-manual/download/zh/reference/utility-types.html#thistype-type              |
+| 模版字面量类型                 | 描述                                                                                                                 |
+| `Uppercase<StringType>`        | 转换为大写                                                                                                           |
+| `Lowercase<StringType>`        | 转换为小写                                                                                                           |
+| `Capitalize<StringType>`       | 首字母转换为大写                                                                                                     |
+| `Uncapitalize<StringType>`     | 首字母转换为小写                                                                                                     |
+
+# 类
+
+> [类 TS](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/classes.html#%E9%AB%98%E7%BA%A7%E6%8A%80%E5%B7%A7)
+
+## 使用接口描述
+
+[TypeScript 手册](https://bosens-china.github.io/Typescript-manual/download/zh/handbook/interfaces.html#%E7%B1%BB%E7%B1%BB%E5%9E%8B)
+
+接口将只检查类的**公共部分**、**实例部分。**
+
+```tsx
+interface ClockConstructor { // 对构造函数的约束（构造函数属于静态部分）
+  new (hour: number, minute: number);
+}
+
+interface ClockInterface { // 对公共部分与实例部分的约束
+  currentTime: Date;
+  setTime(d: Date): void;
+}
+
+const Clock: **ClockConstructor** = class Clock implements ClockInterface {  //核心
+  currentTime: Date = new Date();
+  setTime(d: Date) {
+    this.currentTime = d;
+  }
+  constructor(h: number, m: number) {}
+}
+```
+
+# 命名空间
+
+用于组织代码，将相关逻辑进行命名空间划分
+
+> 对于小型的 JS 应用来说可能没必要，但是对于大型应用，这一点点的花费会带来长久的模块化和可维护性上的便利。
+
+[命名空间](https://bosens-china.github.io/Typescript-manual/download/zh/reference/namespaces.html#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4)
+
+[命名空间和模块](https://bosens-china.github.io/Typescript-manual/download/zh/reference/namespaces-and-modules.html#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%92%8C%E6%A8%A1%E5%9D%97)
+
+# \***\*三斜线指令\*\***
+
+[三斜线指令](https://bosens-china.github.io/Typescript-manual/download/zh/reference/triple-slash-directives.html#%E4%B8%89%E6%96%9C%E7%BA%BF%E6%8C%87%E4%BB%A4)
+
+> 三斜线指令是包含单个 XML 标签的单行注释。 注释的内容会做为编译器指令使用。三斜线指令*仅*可放在包含它的文件的最顶端。
+
+### \***\*`/// <reference path="..." />`\*\***
+
+表示文件间的依赖，能够在编译中引入额外文件
+
+[/// path](https://bosens-china.github.io/Typescript-manual/download/zh/reference/triple-slash-directives.html#reference-path)
+
+### \***\*`/// <reference types="..." />`\*\***
+
+声明了对某个包的依赖
+
+仅当在你需要写一个  `d.ts`  文件时才使用这个指令
+
+- \***\*`/// <reference no-default-lib="true"/>`\*\***
+- \***\*`/// <amd-module />`\*\***
+- \***\*`/// <amd-dependency />`\*\***
