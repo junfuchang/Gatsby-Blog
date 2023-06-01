@@ -5,12 +5,12 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    siteTitle: `Bin - 收获与分享 知足而常乐`,
+    siteTitle: `Bin : Harvest and Share, Be Content and Find Joy.`,
     siteTitleAlt: `Bin - 收获与分享 知足而常乐`,
     siteHeadline: `Bin - 收获与分享 知足而常乐`,
     keywords: `bin 技术 分享 technology`,
     siteUrl: `https://bin.ink`,
-    siteDescription: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！`,
+    siteDescription: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！ Welcome to my personal blog (https://bin.ink)! I share daily life, resources, and technology to provide you with interesting stories, practical resources, and the latest technological insights. Let's explore life, learning, and personal growth together!`,
     siteImage: `/banner.jpg`,
     siteLanguage: `zh-Hans`,
     author: `junfu`,
@@ -53,7 +53,7 @@ const config: GatsbyConfig = {
       options: {
         name: `Bin - 收获与分享 知足而常乐`,
         short_name: `Bin - 收获与分享 知足而常乐`,
-        description: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！`,
+        description: `欢迎来到我的个人博客(https://bin.ink)！我分享日常、资源和技术，为您提供有趣的故事、实用的资源和最新的技术见解。一起探索生活、学习和成长！ Welcome to my personal blog (https://bin.ink)! I share daily life, resources, and technology to provide you with interesting stories, practical resources, and the latest technological insights. Let's explore life, learning, and personal growth together!`,
         start_url: `/`,
         background_color: `#ffffe2`,
         theme_color: `#90EE90`,
