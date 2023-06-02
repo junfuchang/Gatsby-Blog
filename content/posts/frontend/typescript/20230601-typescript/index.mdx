@@ -55,7 +55,7 @@ tags:
 - never
   - 表示永远不可能到达，比如遇到了异常或死循环等
 
-# \***\*高级类型\*\***
+# 高级类型
 
 ## 泛型
 
@@ -72,7 +72,7 @@ tags:
   getProperty(x, "m"); // error
   ```
 
-  - \***\*有条件类型\*\***
+  - 有条件类型
 
   `T extends U ? X : Y`
 
@@ -101,7 +101,7 @@ tags:
   };
   ```
 
-### \***\*索引类型\*\***
+### 索引类型
 
 - `keyof` **索引类型查询操作符**
 
@@ -115,7 +115,7 @@ tags:
 
 > 属性列表是  `keyof T`  且结果类型是  `T[P]`  的变体。 这是使用通用映射类型的一个好模版。 因为这类转换是**同态**的，映射只作用于  `T`  的属性而没有其它的。
 
-## \***\*联合类型\*\***
+## 联合类型
 
 ```tsx
 type strAndNum = string | number;
@@ -123,7 +123,7 @@ type strAndNum = string | number;
 
 **若具有公共字段的联合，则只能访问共有成员，**后续通过类型缩小来确定是哪个类型。
 
-## \***\*交叉类型\*\***
+## 交叉类型
 
 交叉类型是将多个类型合并为一个类型
 
@@ -131,9 +131,9 @@ type strAndNum = string | number;
 type Intersection = Person & Serializable & Loggable;
 ```
 
-## \***\*类型守卫（确认类型）\*\***
+## 类型守卫（确认类型）
 
-1. \***\*使用类型判定\*\***
+1. 使用类型判定
 
 ```tsx
 function isFish(pet: Fish | Bird): pet is Fish {
@@ -145,7 +145,7 @@ if (isFish(pet)) {
 }
 ```
 
-1. \***\*使用  `in`  操作符**
+1. 使用  `in`  操作符\*\*
 
 ```tsx
 if ("swim" in pet) {
@@ -164,7 +164,7 @@ if (typeof padding === "string") {
 }
 ```
 
-1. \***\*`instanceof`  类型守卫**
+1. `instanceof`  类型守卫\*\*
 
 - [instanceof 类型守卫](https://bosens-china.github.io/Typescript-manual/download/zh/reference/advanced-types.html#%E7%B1%BB%E5%9E%8B%E5%AE%88%E5%8D%AB%E4%B8%8E%E7%B1%BB%E5%9E%8B%E5%8C%BA%E5%88%86-type-guards-and-differentiating-types)
 
@@ -173,7 +173,7 @@ if (typeof padding === "string") {
 - 类型别名并不创建新名字
 - _无法通过接口来描述一个类型并且需要使用联合类型或元组类型，这时通常会使用类型别名_
 
-## \***\*多态的  `this`  类型**
+## 多态的  `this`  类型\*\*
 
 > 多态的  `this`  类型表示的是某个包含类或接口的子类型。 这被称做*F*-bounded 多态性。 它能很容易的表现连贯接口间的继承。
 
@@ -313,7 +313,7 @@ let myAdd = function (x: number, y: number): number {
 };
 ```
 
-## \***\*this  和箭头函数\*\***
+## this  和箭头函数
 
 1. 箭头函数能够确定 this 的上下文，所以不必给 this 指定类型
 2. 当使用函数声明的函数想要使用 this，最好进行类型指定，否则容易出现人为失误
@@ -340,7 +340,7 @@ function pickCard(x: { suit: string; card: number }[]): number;
 function pickCard(x: number): { suit: string; card: number };
 ```
 
-# \***\*实用工具类型\*\***
+# 实用工具类型
 
 [实用工具类型](https://bosens-china.github.io/Typescript-manual/download/zh/reference/utility-types.html#%E5%AE%9E%E7%94%A8%E5%B7%A5%E5%85%B7%E7%B1%BB%E5%9E%8B)
 
@@ -407,24 +407,24 @@ const Clock: **ClockConstructor** = class Clock implements ClockInterface {  //�
 
 [命名空间和模块](https://bosens-china.github.io/Typescript-manual/download/zh/reference/namespaces-and-modules.html#%E5%91%BD%E5%90%8D%E7%A9%BA%E9%97%B4%E5%92%8C%E6%A8%A1%E5%9D%97)
 
-# \***\*三斜线指令\*\***
+# 三斜线指令
 
 [三斜线指令](https://bosens-china.github.io/Typescript-manual/download/zh/reference/triple-slash-directives.html#%E4%B8%89%E6%96%9C%E7%BA%BF%E6%8C%87%E4%BB%A4)
 
 > 三斜线指令是包含单个 XML 标签的单行注释。 注释的内容会做为编译器指令使用。三斜线指令*仅*可放在包含它的文件的最顶端。
 
-### \***\*`/// <reference path="..." />`\*\***
+### `/// <reference path="..." />`
 
 表示文件间的依赖，能够在编译中引入额外文件
 
 [/// path](https://bosens-china.github.io/Typescript-manual/download/zh/reference/triple-slash-directives.html#reference-path)
 
-### \***\*`/// <reference types="..." />`\*\***
+### `/// <reference types="..." />`
 
 声明了对某个包的依赖
 
 仅当在你需要写一个  `d.ts`  文件时才使用这个指令
 
-- \***\*`/// <reference no-default-lib="true"/>`\*\***
-- \***\*`/// <amd-module />`\*\***
-- \***\*`/// <amd-dependency />`\*\***
+- `/// <reference no-default-lib="true"/>`
+- `/// <amd-module />`
+- `/// <amd-dependency />`
