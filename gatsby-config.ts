@@ -5,7 +5,7 @@ const shouldAnalyseBundle = process.env.ANALYSE_BUNDLE;
 
 const config: GatsbyConfig = {
   siteMetadata: {
-    siteTitle: `Bin : Harvest and Share, Be Content and Find Joy.`,
+    siteTitle: `Harvest and Share, Be Content and Find Joy.`,
     siteTitleAlt: `Bin - 收获与分享 知足而常乐`,
     siteHeadline: `Bin - 收获与分享 知足而常乐`,
     keywords: `bin 技术 分享 technology`,
