@@ -1,0 +1,393 @@
+---
+title: TypeScript类型体操
+date: 2023-06-02
+description: TypeScript类型练习，由易至难
+tags:
+  - frontend
+  - typescript
+---
+
+# 类型体操
+
+# 热身
+
+## 13. **Hello World**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00013-warm-hello-world/README.zh-CN.md)
+
+```tsx
+type HelloWorld = string;
+```
+
+# 简单
+
+## 4. **实现 Pick**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00004-easy-pick/README.zh-CN.md)
+
+```tsx
+type MyPick<T, K extends keyof T> = { [key in K]: T[key] };
+```
+
+> https://github.com/type-challenges/type-challenges/issues/13427
+
+## 7. **实现 Readonly**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00007-easy-readonly/README.zh-CN.md)
+
+```tsx
+type MyReadonly<T> = {
+  readonly [key in keyof T]: T[key];
+};
+```
+
+> https://github.com/type-challenges/type-challenges/issues/11104
+
+## 11. **元组转换为对象**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00011-easy-tuple-to-object/README.zh-CN.md)
+
+```tsx
+type TupleToObject<T extends ReadonlyArray<string | number | symbol>> = {
+  [P in T[number]]: P;
+};
+```
+
+> https://github.com/type-challenges/type-challenges/issues/5896
+
+## 14. 第一个元素
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00014-easy-first/README.zh-CN.md)
+
+```tsx
+// 1
+type First<T extends ReadonlyArray<any>> = T[number] extends never
+  ? never
+  : T[0];
+
+// 2
+type First<T extends ReadonlyArray<any>> = T extends [] ? never : T[0];
+
+// 3 infer
+type First<T extends ReadonlyArray<any>> = T extends [infer V, ...infer rest]
+  ? V
+  : never;
+
+// 4 检查类型 T 的 length 属性是否为 0
+type First<T extends ReadonlyArray<any>> = T["length"] extends 0 ? never : T[0];
+```
+
+> https://github.com/type-challenges/type-challenges/issues/16315
+
+## 18. **获取元组长度**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00018-easy-tuple-length/README.zh-CN.md)
+
+```tsx
+type Length<T extends ReadonlyArray<string>> = T["length"];
+
+// more 存在 length 即输出
+type Length<T extends readonly any[]> = T extends { length: infer L }
+  ? L
+  : never;
+```
+
+## 43. **Exclude**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00043-easy-exclude/README.zh-CN.md)
+
+```tsx
+type MyExclude<T, U> = T extends U ? never : T;
+```
+
+## 189. **Awaited**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00189-easy-awaited/README.zh-CN.md)
+
+```tsx
+// PromiseLike and infer
+type MyAwaited<T extends PromiseLike<any>> = T extends PromiseLike<infer R>
+  ? R extends PromiseLike<unknown>
+    ? MyAwaited<R>
+    : R
+  : never;
+
+// bug : T must is thenable
+type MyAwaited<T> = T extends PromiseLike<infer U> ? MyAwaited<U> : T;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/18837
+
+## 268. If
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00268-easy-if/README.zh-CN.md)
+
+```tsx
+// 1
+type If<C extends boolean, T, F> = C extends boolean
+  ? C extends true
+    ? T
+    : F
+  : never;
+
+// 2
+type If<T extends boolean, X, Y> = T extends true
+  ? X
+  : T extends false
+  ? Y
+  : never;
+```
+
+## 533. Concat
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00533-easy-concat/README.zh-CN.md)
+
+```tsx
+type Tuple = readonly unknown[];
+
+type Concat<T extends Tuple, U extends Tuple> = [...T, ...U];
+```
+
+## ⚠️898. **Includes**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00898-easy-includes/README.zh-CN.md)
+
+```tsx
+// 1 best
+type Includes<T extends readonly any[], U> = IsEqual<
+  { [P in keyof T as T[P] extends U ? 0 : never]: T[P] },
+  { 0: U }
+>;
+
+// 2
+type isEuqal<X, Y> = (<T>() => T extends X ? 1 : 2) extends <T>() => T extends Y
+  ? 1
+  : 2
+  ? true
+  : false;
+
+type Includes<T extends readonly unknown[], U> = T extends [
+  infer First,
+  ...infer Rest
+]
+  ? isEuqal<First, U> extends true
+    ? true
+    : Includes<Rest, U>
+  : false;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/1568
+
+为什么下面的例子不能通过？
+
+```tsx
+type Includes<T extends any[], U> = T extends [infer Head, ...infer Tail]
+  ? Head extends U
+    ? U extends Head
+      ? true
+      : Includes<Tail, U>
+    : Includes<Tail, U>
+  : false;
+```
+
+## 3057. **Push**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/03057-easy-push/README.zh-CN.md)
+
+```tsx
+type Push<T extends Array<unknown>, U extends unknown> = [...T, U];
+```
+
+## 3060. **Unshift**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/03060-easy-unshift/README.zh-CN.md)
+
+```tsx
+type Unshift<T extends Array<unknown>, U extends unknown> = [U, ...T];
+```
+
+## 3312. **Parameters**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/03312-easy-parameters/README.zh-CN.md)
+
+```tsx
+type MyParameters<T extends (...args: any[]) => unknown> = T extends (
+  ...args: infer A
+) => unknown
+  ? A
+  : unknown;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/5112
+
+# 中等
+
+## 2. **获取函数返回类型**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00002-medium-return-type/README.zh-CN.md)
+
+```tsx
+type MyReturnType<T extends Function> = T extends (...args: any[]) => infer R
+  ? R
+  : unknown;
+```
+
+## 3. **实现 Omit**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00003-medium-omit/README.zh-CN.md)
+
+```tsx
+type MyOmit<T, K extends keyof T> = {
+  [P in keyof T as P extends K ? never : P]: T[P];
+};
+```
+
+## 8. **Readonly 2**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00008-medium-readonly-2/README.zh-CN.md)
+
+```tsx
+// best
+type MyReadonly2<T, K extends keyof T = keyof T> = Omit<T, K> &
+  Readonly<Pick<T, K>>;
+
+// 2
+type MyReadonly2<T, K extends keyof T = keyof T> = {
+  readonly [P in K]: T[P];
+} & {
+  [P in keyof T as P extends K ? never : P]: T[P];
+};
+```
+
+> https://github.com/type-challenges/type-challenges/issues/9050
+
+## 9. **深度 Readonly**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00009-medium-deep-readonly/README.zh-CN.md)
+
+```tsx
+type DeepReadonly<T> = keyof T extends never
+  ? T
+  : { readonly [key in keyof T]: DeepReadonly<T[key]> };
+```
+
+> https://github.com/type-challenges/type-challenges/issues/13912
+
+## 10. **元组转合集**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00010-medium-tuple-to-union/README.zh-CN.md)
+
+```tsx
+// best
+export type TupleToUnion<T> = T extends Array<infer ITEMS> ? ITEMS : never;
+
+// 2
+type TupleToUnion<T extends Array<unknown>> = T extends [
+  infer first,
+  ...infer rest
+]
+  ? first | TupleToUnion<rest>
+  : never;
+```
+
+## 12. **可串联构造器**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00012-medium-chainable-options/README.zh-CN.md)
+
+```tsx
+type Chainable<T = {}> = {
+  option: <K extends string, V>(
+    key: K extends keyof T ? (V extends T[K] ? never : K) : K,
+    value: V
+  ) => Chainable<Omit<T, K> & Record<K, V>>;
+  get: () => T;
+};
+```
+
+> https://github.com/type-challenges/type-challenges/issues/13951
+
+## 15. 最后一个元素
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00015-medium-last/README.zh-CN.md)
+
+```tsx
+type Last<T extends unknown[]> = T extends [any, ...infer P]
+  ? T[P["length"]]
+  : never;
+
+// or
+
+type Last<T extends unknown[]> = T extends [...any, infer P] ? P : never;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/100
+
+## 16. **出堆**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00016-medium-pop/README.zh-CN.md)
+
+```tsx
+type Pop<T extends any[]> = T extends [...infer rest, infer last] ? rest : [];
+```
+
+## 20. **Promise.all**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00020-medium-promise-all/README.zh-CN.md)
+
+```tsx
+declare function PromiseAll<T extends any[]>(
+  values: readonly [...T]
+): Promise<{
+  [key in keyof T]: Awaited<T[key]>;
+}>;
+
+// or
+
+declare function PromiseAll<T extends any[]>(
+  values: readonly [...T]
+): Promise<{
+  [K in keyof T]: T[K] extends Promise<infer R>
+    ? R
+    : T[K] extends number
+    ? T[K]
+    : number;
+}>;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/211
+
+## 62. **Type Lookup**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00062-medium-type-lookup/README.zh-CN.md)
+
+```tsx
+type LookUp<U extends Animal, T extends string> = U extends { type: T }
+  ? U
+  : never;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/75
+
+## 106. **Trim Left**
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00106-medium-trimleft/README.zh-CN.md)
+
+```tsx
+type TrimLeft<S extends string> = S extends `${Space}${infer R}`
+  ? TrimLeft<R>
+  : S;
+```
+
+## 108. Trim
+
+> [type-challenges/README.zh-CN.md at main · type-challenges/type-challenges · GitHub](https://github.com/type-challenges/type-challenges/blob/main/questions/00108-medium-trim/README.zh-CN.md)
+
+```tsx
+type Trim<S extends string> = S extends
+  | `${Space}${infer R}`
+  | `${infer R}${Space}`
+  ? Trim<R>
+  : S;
+```
+
+> https://github.com/type-challenges/type-challenges/issues/481
