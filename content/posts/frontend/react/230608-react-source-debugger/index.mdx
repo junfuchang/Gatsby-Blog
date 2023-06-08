@@ -1,0 +1,128 @@
+---
+title: React源码调试
+date: 2023-06-08
+description: 介绍下react源码调试步骤
+tags:
+  - frontend
+  - react
+---
+
+# React 源码调试
+
+> [react18 源码调试 - 掘金 (juejin.cn)](https://juejin.cn/post/7184408692262404152#comment) > [https://www.bilibili.com/video/BV1He4y1V72s/](https://www.bilibili.com/video/BV1He4y1V72s/)
+
+1. 创建新的 vite 项目
+
+```bash
+yarn create vite react-debugger --template react
+```
+
+1. 将 react 包克隆至 src 目录下
+
+```bash
+git clone https://github.com/facebook/react.git
+```
+
+1. 将 react 源码中的包移动到我们的项目中 src/react/packages/xxx
+   1. react
+   2. react-dom
+   3. react-dom-bindings
+   4. react-reconciler
+   5. scheduler
+   6. shared
+2. 安装 flow-remove-types 去除 flow
+
+> [flow-remove-types | Flow](https://flow.org/en/docs/tools/flow-remove-types/)
+
+```bash
+yarn add --dev flow-remove-types
+
+yarn run flow-remove-types src/react -d src/react
+```
+
+1. 添加 vite 配置项使用 src/react 下的包
+
+```bash
+import path from "path";
+// 添加 resolve配置 将react react-dom指向本地
+resolve: {
+    alias: {
+      react: path.posix.resolve("src/react/packages/react"),
+      "react-dom": path.posix.resolve("src/react/packages/react-dom"),
+      "react-dom-bindings": path.posix.resolve(
+        "src/react/packages/react-dom-bindings"
+      ),
+      "react-reconciler": path.posix.resolve(
+        "src/react/packages/react-reconciler"
+      ),
+      scheduler: path.posix.resolve("src/react/packages/scheduler"),
+      shared: path.posix.resolve("src/react/packages/shared"),
+    },
+},
+
+// __DEV__ is not defined
+// 增加vite的配置
+define: {
+    __DEV__: true, // 设置为false跳过 if(__dev__)的开发逻辑 这样会报错 需要修改jsx_dev的引入
+    __EXPERIMENTAL__: true,
+    __PROFILE__: true,
+},
+
+// 配置了ESLINT的话，可以在.eslintrc中新增项
+globals: {
+  __DEV__: true,
+  __EXPERIMENTAL__: true,
+  __PROFILE__: true,
+},
+```
+
+1. 运行 `yarn dev` 运行报错，以下为解决步骤
+
+   (1) [ERROR] No matching export in "src/react/packages/react-dom/client.js" for import "default”
+
+   ```jsx
+   // main.jsx
+   // 注意要配置再vite配置文件中配置环境变量
+   import * as ReactDOM from "react-dom/client";
+   ```
+
+   (2) Uncaught SyntaxError: The requested module '/src/react/packages/react-reconciler/src/ReactFiberConfig.js' does not provide an export named 'getChildHostContext' (at ReactFiberHostContext.js:21:3)
+
+   ```jsx
+   // react-reconciler\src\ReactFiberConfig.js
+   // 注释掉 // throw new Error('This module must be shimmed by a specific renderer.');
+   export * from "./forks/ReactFiberConfig.dom-browser";
+   ```
+
+   (3) Uncaught SyntaxError: The requested module '/node_modules/.vite/deps/react.js?v=072f8143' does not provide an export named 'default' (at main.jsx:1:8)
+
+   ```jsx
+   // main.jsx
+   import * as React from "react";
+   ```
+
+   (4) Uncaught TypeError: Cannot destructure property 'ReactCurrentDispatcher' of 'ReactSharedInternals_default2' as it is undefined.
+   at ReactComponentStackFrame.js:27:9
+
+   ```jsx
+   // shared\ReactComponentStackFrame.js
+   // 注释掉 // import ReactSharedInternals from "shared/ReactSharedInternals";
+   import ReactSharedInternals from "../react/src/ReactSharedInternals";
+   ```
+
+2. 根目录创建.vscode 文件夹 launch.json
+
+```jsx
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "msedge",
+      "request": "launch",
+      "name": "针对 localhost 启动 Edge",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}"
+    }
+  ]
+}
+```

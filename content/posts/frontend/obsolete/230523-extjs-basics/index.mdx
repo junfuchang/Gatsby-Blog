@@ -1,0 +1,269 @@
+---
+title: EXTJS基础知识
+date: 2023-05-23
+description: EXTJS基础知识,内容主要来自W3C
+tags:
+  - frontend
+  - obsolete
+---
+
+# EXTJS 基础知识
+
+> [Extjs 教程](https://www.w3cschool.cn/extjs/)
+
+# EXT 调试技巧
+
+我们使用 F12 进入控制台后，能够在源代码页找到 EXT 页面源码。
+
+1. 选择工具栏中的覆盖选项
+2. 添加替代文件夹
+3. 使用控制台或编辑器修改源码
+4. 保存后刷新即可实时看到效果变化
+
+# Class 系统
+
+### 定义类
+
+Ext.define() 用于在 Ext JS 中定义类。
+
+```jsx
+// 名称 / 行为 / 可选回调,加载成功时进行调用
+Ext.define(class name, class members/properties, callback function);
+```
+
+```jsx
+Ext.define(studentApp.view.StudentDeatilsGrid, {
+  extend: "Ext.grid.GridPanel", // 继承自
+  id: "studentsDetailsGrid", // 唯一ID
+  store: "StudentsDetailsGridStore", // 数据源
+  renderTo: "studentsDetailsRenderDiv", // 渲染到
+  // ...
+});
+```
+
+### 创建对象
+
+- 使用 new 关键字
+
+```jsx
+var studentObject = new student();
+studentObject.getStudentName();
+```
+
+- 使用 Ext.create()
+
+```jsx
+Ext.create("Ext.Panel", {
+  renderTo: "helloWorldPanel",
+  height: 100,
+  width: 100,
+  title: "Hello world",
+  html: "First Ext JS Hello World Program",
+});
+```
+
+### 继承
+
+**将类 A 中定义的功能用于类 B**
+
+- 使用 Ext.extend
+
+```jsx
+Ext.define(studentApp.view.StudentDetailsGrid, {
+   extend : 'Ext.grid.GridPanel', //使用 Ext JS 类 GridPanel 的基本功能
+   ...
+});
+```
+
+- 使用 Mixins
+
+在类 B 中使用类 A
+
+```jsx
+mixins : {
+   commons : 'DepartmentApp.utils.DepartmentUtils' // 能够调用DepartmentUtils相关功能
+},
+```
+
+# 容器
+
+**用于嵌套，如同 div**
+
+Ext.container.Container 是 Ext JS 中所有容器的基类。
+
+## 容器内定义组件与嵌套
+
+```jsx
+var component1 = Ext.create('Ext.Component', {
+	html:'First Component'
+});
+
+var container = Ext.create('Ext.container.Container', {
+	items: [component1, component2,...]
+});
+
+Ext.create('Ext.container.Container', {
+	renderTo: Ext.getBody(),
+	items: [container]
+});
+```
+
+## 容器类型
+
+### Ext.panel.Panel
+
+> 允许在正常面板中添加项目的基本容器
+
+[Ext.js Ext.panel.Panel 容器](https://www.w3cschool.cn/extjs/panel.html)
+
+### Ext.form.Panel
+
+> Form 面板为表单提供了一个标准容器，它本质上是一个标准的 Ext.panel.Panel，它自动创建一个用于管理任何 Ext.form.field.Field 对象的 BasicForm
+
+[Ext.js Ext.form.Panel 容器](https://www.w3cschool.cn/extjs/extpanel.html)
+
+### Ext.tab.Panel
+
+> 标签面板
+
+[Ext.js Ext.tab.Panel 容器](https://www.w3cschool.cn/extjs/container.html)
+
+### Ext.container.Viewport
+
+> 会自动调整大小到整个浏览器窗口的大小
+
+[Ext.js Ext.container.Viewport 容器\_w3cschool](https://www.w3cschool.cn/extjs/containerviewport.html)
+
+# **布局**
+
+`layout: type`
+
+| 类型            | 说明                                                                                         | 链接                                                |
+| --------------- | -------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| absolute        | 使用容器中的 XY 坐标定位项目                                                                 | https://www.w3cschool.cn/extjs/layoutabsolute.html  |
+| accordion       |                                                                                              | https://www.w3cschool.cn/extjs/layoutaccordion.html |
+| anchor          | 相对于容器大小                                                                               | https://www.w3cschool.cn/extjs/layoutanchor.html    |
+| border          | 将整个容器分为 5 个部分，分别是 east, south, west, north, center，使用 region 配置项进行配置 | https://www.w3cschool.cn/extjs/layoutborder.html    |
+| auto            | 默认布局                                                                                     | https://www.w3cschool.cn/extjs/layoutauto.html      |
+| layout-cardtabs |                                                                                              | https://www.w3cschool.cn/extjs/cardpanel.html       |
+| card            | 分布提交，通常用于向导                                                                       | https://www.w3cschool.cn/extjs/cardwizard.html      |
+| column          | 显示多个列                                                                                   | https://www.w3cschool.cn/extjs/layoutcolumn.html    |
+| fit             | 容器用单个面板填充                                                                           | https://www.w3cschool.cn/extjs/layoutfit.html       |
+| table           | 以 HTML 表格式                                                                               | https://www.w3cschool.cn/extjs/extjs-lof81zwq.html  |
+| vbox            | 以垂直方式分布                                                                               | https://www.w3cschool.cn/extjs/vbox.html            |
+| hbox            | 以水平方式分布                                                                               | https://www.w3cschool.cn/extjs/hbox.html            |
+
+# 组件
+
+| 类型        | 说明         | 链接                                           |
+| ----------- | ------------ | ---------------------------------------------- |
+| Grid        | 表格         | https://www.w3cschool.cn/extjs/grid.html       |
+| Form        | 表单         | https://www.w3cschool.cn/extjs/from.html       |
+| Message Box | 消息框       | https://www.w3cschool.cn/extjs/messagebox.html |
+| Tool tip    | 提示         | https://www.w3cschool.cn/extjs/tooltip.html    |
+| Window      | 创建一个窗口 | https://www.w3cschool.cn/extjs/window.html     |
+| HTML editor | HTML 编辑器  | https://www.w3cschool.cn/extjs/htmleditor.html |
+
+# 事件
+
+1. 内置事件使用侦听器
+
+   ```jsx
+   listeners: {
+       click: function() {
+          Ext.MessageBox.alert('Alert box', 'Button is clicked');
+       }
+    }
+   ```
+
+2. 附加事件监听
+
+   ```jsx
+   button.on("click", function () {
+     Ext.MessageBox.alert("Alert box", "Button is clicked");
+   });
+   ```
+
+3. 自定义事件
+
+   fireEvent 进行事件触发
+
+   ```jsx
+   var button = Ext.create("Ext.Button", {
+     renderTo: Ext.getElementById("helloWorldPanel"),
+     text: "My Button",
+     listeners: {
+       myEvent: function (button) {
+         Ext.MessageBox.alert("Alert box", "My custom event is called");
+       },
+     },
+   });
+   // 2000后进行触发myEvent事件
+   Ext.defer(function () {
+     button.fireEvent("myEvent");
+   }, 2000);
+   ```
+
+# 数据
+
+### modal
+
+将数据绑定视图
+
+```jsx
+Ext.define("StudentDataModel", {
+  extend: "Ext.data.Model",
+  fields: [
+    { name: "name", mapping: "name" },
+    { name: "age", mapping: "age" },
+    { name: "marks", mapping: "marks" },
+  ],
+});
+```
+
+### Store
+
+存储数据
+
+- 静态数据
+
+```jsx
+Ext.create('Ext.data.Store', {
+  model: 'StudentDataModel',
+  data: [
+     { name : "Asha", age : "16", marks : "90" },
+     { name : "Vinit", age : "18", marks : "95" },
+     { name : "Anand", age : "20", marks : "68" },
+     { name : "Niharika", age : "21", marks : "86" },
+     { name : "Manali", age : "22", marks : "57" }
+  ];
+});
+```
+
+- 动态数据使用下面的 Proxy
+
+### Proxy
+
+1. 客户端代理：本地存储
+2. 服务器代理：远程数据加载
+
+```jsx
+Ext.create("Ext.data.Store", {
+  model: "StudentDataModel",
+  proxy: {
+    type: "rest",
+    actionMethods: {
+      read: "POST", // 请求类型
+    },
+    url: "restUrlPathOrJsonFilePath", // 接口
+    reader: {
+      type: "json", // 类型
+      root: "data",
+    },
+  },
+});
+```
+
+# 方法
+
+> [Ext.js 方法](https://www.w3cschool.cn/extjs/extjs_methods.html)
